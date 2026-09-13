@@ -9,7 +9,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "pages:build": "npx @cloudflare/next-on-pages"
+    "preview": "npx serve out"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.1",
