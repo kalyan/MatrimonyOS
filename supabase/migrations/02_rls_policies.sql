@@ -35,6 +35,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Helper function to get current user's profile id safely without recursion
+CREATE OR REPLACE FUNCTION get_my_profile_id()
+RETURNS UUID AS $$
+  SELECT id FROM profiles WHERE user_id = auth.uid() LIMIT 1;
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
 -- 1. USER PROFILES
 CREATE POLICY "Users can view their own user profile"
 ON user_profiles FOR SELECT
@@ -56,8 +62,8 @@ USING (
     profile_visibility IN ('registered', 'matches_only')
     AND NOT EXISTS (
       SELECT 1 FROM blocks
-      WHERE (blocker_id = profiles.id AND blocked_id IN (SELECT id FROM profiles WHERE user_id = auth.uid()))
-         OR (blocked_id = profiles.id AND blocker_id IN (SELECT id FROM profiles WHERE user_id = auth.uid()))
+      WHERE (blocker_id = profiles.id AND blocked_id = get_my_profile_id())
+         OR (blocked_id = profiles.id AND blocker_id = get_my_profile_id())
     )
   )
   OR is_admin_or_moderator()
@@ -214,3 +220,15 @@ WITH CHECK (
 CREATE POLICY "Admins and moderators manage reports"
 ON reports FOR ALL
 USING (is_admin_or_moderator());
+
+-- 10. COMMUNITIES & SUBSCRIPTION PLANS (Public Read)
+ALTER TABLE communities ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read for communities"
+ON communities FOR SELECT
+USING (true);
+
+ALTER TABLE subscription_plans ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read for subscription_plans"
+ON subscription_plans FOR SELECT
+USING (true);
+
