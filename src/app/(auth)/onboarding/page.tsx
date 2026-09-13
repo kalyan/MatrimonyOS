@@ -30,7 +30,9 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [isAgeConfirmed, setIsAgeConfirmed] = useState(false);
   const [showAiBioModal, setShowAiBioModal] = useState(false);
+  const [submittedProfileId, setSubmittedProfileId] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+
 
   // Form State
   const [formData, setFormData] = useState({
@@ -155,7 +157,9 @@ export default function OnboardingPage() {
       profile_visibility: 'registered',
       photo_visibility: 'registered',
       contact_visibility: 'mutual_consent',
-      is_verified: true,
+      is_verified: false,
+      is_active: false,
+      account_status: 'pending_approval',
       created_by_relation: formData.createdBy,
       primary_photo_url: formData.photoUrl,
       photos: [
@@ -165,7 +169,7 @@ export default function OnboardingPage() {
           url: formData.photoUrl,
           is_primary: true,
           order_index: 0,
-          is_approved: true,
+          is_approved: false,
           created_at: new Date().toISOString(),
         },
       ],
@@ -174,11 +178,7 @@ export default function OnboardingPage() {
     };
 
     // Save in repository
-    const profiles = MockRepository.getProfiles();
-    profiles.unshift(newProfile);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('matrimony_os_profiles', JSON.stringify(profiles));
-    }
+    MockRepository.saveProfile(newProfile);
 
     // Save preferences
     MockRepository.savePreferences(newProfileId, {
@@ -198,7 +198,8 @@ export default function OnboardingPage() {
     // Login as newly created profile
     loginAsDemo(newProfileId, 'member');
     refreshProfile();
-    router.push('/home');
+    setSubmittedProfileId(newProfileId);
+    setStep(7);
   };
 
   return (
@@ -634,28 +635,116 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* Navigation Buttons */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-          {step > 0 ? (
+        {/* STEP 7: REGISTRATION COMPLETE & PENDING ADMIN ACTIVATION */}
+        {step === 7 && (
+          <div className="text-center py-6 space-y-6">
+            <div className="w-16 h-16 rounded-3xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-inner border border-amber-200">
+              <ShieldCheck className="w-9 h-9" />
+            </div>
+
+            <div className="space-y-2 max-w-md mx-auto">
+              <span className="inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping mr-1" />
+                Status: Pending Administrator Activation
+              </span>
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+                Profile Submitted for Review
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Thank you for completing your matrimonial profile, <span className="font-bold text-slate-900">{formData.firstName}</span>!
+                In accordance with our community safety charter, all profiles require administrative verification before becoming visible in candidate matching feeds.
+              </p>
+            </div>
+
+            {/* Profile Summary Card */}
+            <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 max-w-md mx-auto text-left flex items-center space-x-3.5">
+              <img
+                src={formData.photoUrl}
+                alt=""
+                className="w-14 h-14 rounded-2xl object-cover ring-2 ring-white shadow-sm flex-shrink-0"
+              />
+              <div className="min-w-0 flex-1 text-xs">
+                <div className="font-bold text-slate-900 text-sm truncate">
+                  {formData.firstName} {formData.lastName}
+                </div>
+                <div className="text-slate-500 text-[11px] truncate">
+                  {formData.profession} • {formData.city}
+                </div>
+                <div className="mt-1 flex items-center space-x-1.5 text-[10px] text-amber-700 font-semibold">
+                  <AlertCircle className="w-3 h-3 flex-shrink-0" />
+                  <span>Awaiting approval from Kalyanjit (kalyanjit@gmail.com)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Explanatory points */}
+            <div className="p-4 bg-purple-50/70 border border-purple-100 rounded-2xl text-left max-w-md mx-auto text-xs text-purple-950 space-y-1.5">
+              <div className="font-bold text-purple-900 flex items-center space-x-1.5">
+                <span>🛡️ Platform Safety Protocol:</span>
+              </div>
+              <p className="text-[11px] text-purple-800">
+                • Zero spam tolerance: Only genuine, 18+ verified candidates are admitted.
+              </p>
+              <p className="text-[11px] text-purple-800">
+                • Once approved by the administrator, candidate discovery and family invites will unlock immediately.
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => router.push('/home')}
+                className="w-full sm:w-auto py-2.5 px-6 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition shadow-sm"
+              >
+                Go to Home Feed
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push(`/profile/${submittedProfileId}`)}
+                className="w-full sm:w-auto py-2.5 px-5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition"
+              >
+                Preview My Profile
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  loginAsDemo('', 'admin');
+                  router.push('/admin');
+                }}
+                className="w-full sm:w-auto py-2.5 px-4 rounded-xl border border-purple-200 bg-purple-50 text-purple-700 text-xs font-bold hover:bg-purple-100 transition flex items-center justify-center space-x-1"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Review in Admin Console</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation Buttons (Only for steps 0 to 6) */}
+        {step < 7 && (
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+            {step > 0 ? (
+              <button
+                type="button"
+                onClick={handleBack}
+                className="py-2.5 px-4 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition flex items-center space-x-1"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Back</span>
+              </button>
+            ) : <div />}
+
             <button
               type="button"
-              onClick={handleBack}
-              className="py-2.5 px-4 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition flex items-center space-x-1"
+              onClick={handleNext}
+              className="py-2.5 px-6 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition shadow-md shadow-brand-500/25 flex items-center space-x-1.5"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back</span>
+              <span>{step === 6 ? 'Submit Profile for Review' : 'Continue'}</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
-          ) : <div />}
-
-          <button
-            type="button"
-            onClick={handleNext}
-            className="py-2.5 px-6 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition shadow-md shadow-brand-500/25 flex items-center space-x-1.5"
-          >
-            <span>{step === 6 ? 'Complete & View Matches' : 'Continue'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
+          </div>
+        )}
       </div>
 
       {/* AI Bio Assistant Modal */}

@@ -50,7 +50,7 @@ export default function Header() {
           </nav>
 
           {/* Right Action Bar: Demo Account Switcher & Profile */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2.5">
             {/* Quick Demo Switcher Pill */}
             <button
               onClick={() => setShowDemoModal(true)}
@@ -63,6 +63,15 @@ export default function Header() {
                 {user?.role === 'admin' ? 'Admin' : profile?.first_name || 'Guest'}
               </span>
             </button>
+
+            {/* Direct Auth / Login Link */}
+            <Link
+              href="/login"
+              className="text-xs font-semibold px-2.5 py-1.5 rounded-full bg-rose-50 text-brand-700 hover:bg-rose-100 border border-rose-200 transition hidden sm:inline-flex items-center space-x-1"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>{user?.email ? (user.role === 'admin' ? 'Admin Portal' : 'My Account') : 'Sign In'}</span>
+            </Link>
 
             {/* Profile Avatar / Quick Link */}
             {profile && (

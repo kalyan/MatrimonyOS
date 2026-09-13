@@ -95,18 +95,27 @@ export default function DemoSwitcherModal({ onClose }: Props) {
                 <Shield className="w-5 h-5" />
               </div>
               <div>
-                <div className="font-semibold text-slate-900 text-sm">Platform Administrator</div>
-                <div className="text-xs text-slate-500">Moderation, report queue, user verification & stats</div>
+                <div className="font-semibold text-slate-900 text-sm flex items-center space-x-1.5">
+                  <span>Platform Administrator</span>
+                  <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-bold">Admin</span>
+                </div>
+                <div className="text-xs text-purple-700 font-medium">kalyanjit@gmail.com</div>
+                <div className="text-[11px] text-slate-500">Approve pending candidate profiles, verify KYC & govern platform</div>
               </div>
             </div>
             {user?.role === 'admin' && <Check className="w-5 h-5 text-purple-600 flex-shrink-0" />}
           </button>
         </div>
 
-        <div className="mt-5 pt-4 border-t border-slate-100 text-center">
-          <p className="text-[11px] text-slate-400">
-            All data persists safely in local storage during demo mode.
-          </p>
+        <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+          <span className="text-slate-500">Real Supabase Auth?</span>
+          <a
+            href="/login"
+            onClick={onClose}
+            className="text-brand-600 font-bold hover:underline"
+          >
+            Sign in with email &rarr;
+          </a>
         </div>
       </div>
     </div>

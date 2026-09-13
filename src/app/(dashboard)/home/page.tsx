@@ -22,7 +22,7 @@ import { Profile, MatchScoreResult } from '@/lib/types';
 import { WhatsAppService } from '@/lib/whatsapp/whatsapp-service';
 
 export default function HomePage() {
-  const { profile } = useAuth();
+  const { profile, isPendingApproval } = useAuth();
   const [recommendations, setRecommendations] = useState<{ profile: Profile; score: MatchScoreResult }[]>([]);
   const [sentInterestIds, setSentInterestIds] = useState<string[]>([]);
   const [stats, setStats] = useState({ receivedInterests: 0, connections: 0, familyReviews: 0 });
@@ -72,6 +72,27 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6 pb-12">
+      {/* Pending Admin Approval Banner */}
+      {isPendingApproval && (
+        <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 flex items-start space-x-3 text-amber-900 shadow-sm animate-fade-in">
+          <div className="p-2 bg-amber-100 rounded-xl text-amber-700 flex-shrink-0 mt-0.5">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <div className="flex-1 text-xs sm:text-sm">
+            <div className="font-bold text-amber-950 flex items-center space-x-2">
+              <span>Profile Submitted for Admin Verification</span>
+              <span className="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 text-[10px] uppercase font-extrabold tracking-wider">
+                Pending Activation
+              </span>
+            </div>
+            <p className="mt-1 text-amber-800">
+              Your profile is currently awaiting verification by Administrator (<strong>kalyanjit@gmail.com</strong>).
+              To maintain authenticity and trust across the platform, your profile is hidden from discover feeds until approved.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Top Greeting & Notification Banner */}
       <div className="bg-gradient-to-r from-brand-600 via-rose-600 to-amber-600 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
         <div className="relative z-10 space-y-2">

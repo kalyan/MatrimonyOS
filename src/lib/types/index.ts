@@ -1,6 +1,6 @@
 export type UserRole = 'member' | 'moderator' | 'admin';
 export type VerificationStatus = 'unverified' | 'pending' | 'verified' | 'rejected';
-export type AccountStatus = 'active' | 'suspended' | 'deactivated' | 'banned';
+export type AccountStatus = 'active' | 'suspended' | 'deactivated' | 'banned' | 'pending_approval';
 export type CreatedByRelation = 'self' | 'parent' | 'sibling' | 'relative' | 'guardian';
 
 export type Gender = 'male' | 'female' | 'non_binary' | 'other';
@@ -113,6 +113,8 @@ export interface Profile {
   primary_photo_url?: string;
   created_by_relation?: CreatedByRelation;
   is_verified?: boolean;
+  is_active?: boolean;
+  account_status?: AccountStatus;
   
   created_at: string;
   updated_at: string;

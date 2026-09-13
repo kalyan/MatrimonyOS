@@ -70,8 +70,10 @@ export function calculateMatchScore(
 
   // 3. Education Alignment (Max 15 points)
   let educationScore = 8;
-  const userEduLower = userProfile.highest_education.toLowerCase();
-  const candEduLower = candidate.highest_education.toLowerCase();
+  const userEdu = userProfile.highest_education || '';
+  const candEdu = candidate.highest_education || '';
+  const userEduLower = userEdu.toLowerCase();
+  const candEduLower = candEdu.toLowerCase();
 
   const isMasterOrDoc = (edu: string) =>
     edu.includes('master') || edu.includes('m.') || edu.includes('phd') || edu.includes('mba') || edu.includes('m.tech') || edu.includes('ms');
@@ -84,10 +86,10 @@ export function calculateMatchScore(
     )
   ) {
     educationScore = 15;
-    strongAlignment.push(`Education matches your preference (${candidate.highest_education})`);
+    strongAlignment.push(`Education matches your preference (${candEdu})`);
   } else if (isMasterOrDoc(userEduLower) && isMasterOrDoc(candEduLower)) {
     educationScore = 15;
-    strongAlignment.push(`Both hold postgraduate degrees (${candidate.highest_education})`);
+    strongAlignment.push(`Both hold postgraduate degrees (${candEdu})`);
   } else if (
     (isBachelor(userEduLower) && isBachelor(candEduLower)) ||
     (isMasterOrDoc(userEduLower) && isBachelor(candEduLower)) ||
@@ -101,7 +103,7 @@ export function calculateMatchScore(
 
   // 4. Profession & Career (Max 15 points)
   let professionScore = 8;
-  const candProfLower = candidate.profession.toLowerCase();
+  const candProfLower = (candidate.profession || '').toLowerCase();
   if (
     preferences?.preferred_professions?.some((p) =>
       candProfLower.includes(p.toLowerCase())
@@ -118,7 +120,7 @@ export function calculateMatchScore(
     strongAlignment.push(`Both work in the ${candidate.industry} sector`);
   } else if (candidate.employment_type === userProfile.employment_type) {
     professionScore = 12;
-    strongAlignment.push(`Similar professional employment stability (${candidate.employment_type.replace('_', ' ')})`);
+    strongAlignment.push(`Similar professional employment stability (${candidate.employment_type?.replace('_', ' ') || ''})`);
   } else {
     professionScore = 9;
     thingsToDiscuss.push(`Work schedule and career routines (${candidate.profession} & ${userProfile.profession})`);
@@ -127,9 +129,11 @@ export function calculateMatchScore(
   // 5. Language & Cultural Alignment (Max 15 points)
   let languageScore = 6;
   const sameMotherTongue =
-    candidate.mother_tongue.toLowerCase() === userProfile.mother_tongue.toLowerCase();
-  const sharedLanguages = candidate.languages_spoken.filter((lang) =>
-    userProfile.languages_spoken.some((l) => l.toLowerCase() === lang.toLowerCase())
+    (candidate.mother_tongue || '').toLowerCase() === (userProfile.mother_tongue || '').toLowerCase();
+  const candLanguages = candidate.languages_spoken || [];
+  const userLanguages = userProfile.languages_spoken || [];
+  const sharedLanguages = candLanguages.filter((lang) =>
+    userLanguages.some((l) => l.toLowerCase() === lang.toLowerCase())
   );
 
   if (sameMotherTongue) {

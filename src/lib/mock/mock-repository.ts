@@ -87,6 +87,18 @@ export class MockRepository {
     return profiles.find((p) => p.user_id === userId);
   }
 
+  static saveProfile(profile: Profile): Profile {
+    const profiles = this.getProfiles();
+    const index = profiles.findIndex((p) => p.id === profile.id);
+    if (index !== -1) {
+      profiles[index] = { ...profiles[index], ...profile, updated_at: new Date().toISOString() };
+    } else {
+      profiles.unshift(profile);
+    }
+    this.setItem(STORAGE_KEYS.PROFILES, profiles);
+    return profile;
+  }
+
   static updateProfile(id: string, updates: Partial<Profile>): Profile {
     const profiles = this.getProfiles();
     const index = profiles.findIndex((p) => p.id === id);
@@ -99,6 +111,27 @@ export class MockRepository {
     profiles[index] = updated;
     this.setItem(STORAGE_KEYS.PROFILES, profiles);
     return updated;
+  }
+
+  // Admin Activation & Moderation
+  static activateProfile(id: string): Profile {
+    return this.updateProfile(id, {
+      is_active: true,
+      is_verified: true,
+      account_status: 'active',
+    });
+  }
+
+  static deactivateProfile(id: string): Profile {
+    return this.updateProfile(id, {
+      is_active: false,
+      account_status: 'deactivated',
+    });
+  }
+
+  static getPendingProfiles(): Profile[] {
+    const profiles = this.getProfiles();
+    return profiles.filter((p) => p.is_active === false || p.account_status === 'pending_approval');
   }
 
   // Partner Preferences
@@ -145,7 +178,16 @@ export class MockRepository {
     const profiles = this.getProfiles();
 
     return profiles
-      .filter((p) => p.id !== currentProfileId && !blocks.includes(p.id) && p.gender !== currentProfile.gender)
+      .filter(
+        (p) =>
+          p.id !== currentProfileId &&
+          !blocks.includes(p.id) &&
+          p.gender !== currentProfile.gender &&
+          p.is_active !== false &&
+          p.account_status !== 'pending_approval' &&
+          p.account_status !== 'deactivated' &&
+          p.account_status !== 'banned'
+      )
       .map((candidate) => {
         const score = calculateMatchScore(candidate, currentProfile, preferences);
         return { profile: candidate, score };
