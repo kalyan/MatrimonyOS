@@ -552,6 +552,13 @@ export default function AdminDashboardPage() {
                     </tr>
                   );
                 })}
+                {filteredProfiles.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center text-slate-400 text-xs">
+                      No registered user accounts found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

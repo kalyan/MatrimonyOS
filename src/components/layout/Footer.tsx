@@ -214,6 +214,7 @@ export default function Footer() {
           <span>Matrimony OS</span>
         </div>
         <div className="flex flex-wrap gap-x-4 gap-y-2 text-slate-600">
+          <Link href="/how-it-works" className="text-brand-600 font-bold hover:text-brand-700 transition">How It Works</Link>
           <Link href="/terms" className="hover:text-slate-900 transition">Terms of Service</Link>
           <Link href="/privacy" className="hover:text-slate-900 transition">Privacy Policy</Link>
           <Link href="/guidelines" className="hover:text-slate-900 transition">Community Guidelines</Link>

@@ -230,17 +230,37 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recommendations.slice(0, 6).map((rec) => (
-            <MatchCard
-              key={rec.profile.id}
-              candidate={rec.profile}
-              scoreResult={rec.score}
-              onSendInterest={handleSendInterest}
-              isInterestSent={sentInterestIds.includes(rec.profile.id)}
-            />
-          ))}
-        </div>
+        {recommendations.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recommendations.slice(0, 6).map((rec) => (
+              <MatchCard
+                key={rec.profile.id}
+                candidate={rec.profile}
+                scoreResult={rec.score}
+                onSendInterest={handleSendInterest}
+                isInterestSent={sentInterestIds.includes(rec.profile.id)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl p-8 text-center border border-slate-200 shadow-soft max-w-lg mx-auto space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 mx-auto flex items-center justify-center">
+              <Sparkles className="w-6 h-6" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-sm">No Recommendations Available Yet</h3>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">
+              As soon as newly registered candidates within your preferred communities are reviewed and activated by Platform Admin, personalized AI matches will appear here.
+            </p>
+            <div className="pt-2 flex justify-center space-x-3">
+              <Link
+                href="/how-it-works"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition"
+              >
+                How Matchmaking Works
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Family Invite Modal */}

@@ -33,13 +33,41 @@ describe('Admin User Activation Workflow', () => {
     updated_at: new Date().toISOString(),
   };
 
+  const viewerCandidate: Profile = {
+    id: 'prof-viewer',
+    user_id: 'usr-viewer',
+    first_name: 'Priya',
+    last_name: 'Sharma',
+    gender: 'female',
+    date_of_birth: '1997-04-15',
+    community_id: 'com-brahmin',
+    religion: 'Hindu',
+    mother_tongue: 'Tamil',
+    city: 'Bengaluru',
+    state: 'Karnataka',
+    country: 'India',
+    highest_education: 'Master of Technology',
+    profession: 'Product Manager',
+    languages_spoken: ['Tamil', 'English'],
+    marital_status: 'never_married',
+    dietary_habits: 'vegetarian',
+    primary_photo_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
+    about_me: 'Active candidate looking for matches.',
+    is_verified: true,
+    is_active: true,
+    account_status: 'active',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
   beforeEach(() => {
-    // Save new profile in pending state
+    // Save viewer profile and new pending profile
+    MockRepository.saveProfile(viewerCandidate);
     MockRepository.saveProfile(newCandidate);
   });
 
   it('excludes pending unapproved profiles from public match recommendations', () => {
-    const recs = MockRepository.getRecommendations('prof-1');
+    const recs = MockRepository.getRecommendations('prof-viewer');
     const hasPendingProfile = recs.some((r) => r.profile.id === newCandidate.id);
     expect(hasPendingProfile).toBe(false);
   });
@@ -64,7 +92,7 @@ describe('Admin User Activation Workflow', () => {
     expect(pendingAfter.some((p) => p.id === newCandidate.id)).toBe(false);
 
     // Should now be discoverable in recommendations
-    const recsAfter = MockRepository.getRecommendations('prof-1');
+    const recsAfter = MockRepository.getRecommendations('prof-viewer');
     expect(recsAfter.some((r) => r.profile.id === newCandidate.id)).toBe(true);
   });
 
@@ -74,7 +102,7 @@ describe('Admin User Activation Workflow', () => {
     expect(deactivated?.is_active).toBe(false);
     expect(deactivated?.account_status).toBe('deactivated');
 
-    const recs = MockRepository.getRecommendations('prof-1');
+    const recs = MockRepository.getRecommendations('prof-viewer');
     expect(recs.some((r) => r.profile.id === newCandidate.id)).toBe(false);
   });
 });

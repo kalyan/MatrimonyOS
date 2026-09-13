@@ -35,14 +35,20 @@ const STORAGE_KEYS = {
 };
 
 export class MockRepository {
+  private static memoryStore: Record<string, string> = {};
+
   private static isClient(): boolean {
     return typeof window !== 'undefined';
   }
 
   private static getItem<T>(key: string, fallback: T): T {
-    if (!this.isClient()) return fallback;
     try {
-      const data = localStorage.getItem(key);
+      let data: string | null = null;
+      if (this.isClient()) {
+        data = localStorage.getItem(key);
+      } else {
+        data = this.memoryStore[key] || null;
+      }
       return data ? JSON.parse(data) : fallback;
     } catch {
       return fallback;
@@ -50,9 +56,12 @@ export class MockRepository {
   }
 
   private static setItem<T>(key: string, value: T): void {
-    if (!this.isClient()) return;
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      const json = JSON.stringify(value);
+      if (this.isClient()) {
+        localStorage.setItem(key, json);
+      }
+      this.memoryStore[key] = json;
     } catch (err) {
       console.error('Storage error:', err);
     }
@@ -60,21 +69,33 @@ export class MockRepository {
 
   // Current Active User
   static getCurrentUserId(): string {
-    return this.getItem(STORAGE_KEYS.CURRENT_USER_ID, 'user-1'); // Default: Priya Sharma
+    return this.getItem(STORAGE_KEYS.CURRENT_USER_ID, '');
   }
 
   static setCurrentUserId(userId: string): void {
     this.setItem(STORAGE_KEYS.CURRENT_USER_ID, userId);
   }
 
-  // Communities
+  static purgeAllDemoData(): void {
+    this.memoryStore = {};
+    if (!this.isClient()) return;
+    try {
+      Object.values(STORAGE_KEYS).forEach((key) => {
+        localStorage.removeItem(key);
+      });
+    } catch (err) {
+      console.error('Failed to purge demo data:', err);
+    }
+  }
+
+  // Communities (Official Indian regional communities taxonomy)
   static getCommunities(): Community[] {
     return SEED_COMMUNITIES;
   }
 
   // Profiles
   static getProfiles(): Profile[] {
-    return this.getItem<Profile[]>(STORAGE_KEYS.PROFILES, SEED_PROFILES);
+    return this.getItem<Profile[]>(STORAGE_KEYS.PROFILES, []);
   }
 
   static getProfileById(id: string): Profile | undefined {
@@ -197,7 +218,7 @@ export class MockRepository {
 
   // Interests
   static getInterests(): Interest[] {
-    return this.getItem<Interest[]>(STORAGE_KEYS.INTERESTS, SEED_INTERESTS);
+    return this.getItem<Interest[]>(STORAGE_KEYS.INTERESTS, []);
   }
 
   static getInterestsForProfile(profileId: string): { received: Interest[]; sent: Interest[] } {
@@ -258,7 +279,7 @@ export class MockRepository {
 
   // Connections (Mutual Connections)
   static getConnections(): Connection[] {
-    return this.getItem<Connection[]>(STORAGE_KEYS.CONNECTIONS, SEED_CONNECTIONS);
+    return this.getItem<Connection[]>(STORAGE_KEYS.CONNECTIONS, []);
   }
 
   static getConnectionsForProfile(profileId: string): Connection[] {
@@ -323,12 +344,12 @@ export class MockRepository {
 
   // Family Mode
   static getFamilyMembers(primaryProfileId: string): FamilyMember[] {
-    const all = this.getItem<FamilyMember[]>(STORAGE_KEYS.FAMILY_MEMBERS, SEED_FAMILY_MEMBERS);
+    const all = this.getItem<FamilyMember[]>(STORAGE_KEYS.FAMILY_MEMBERS, []);
     return all.filter((f) => f.primary_profile_id === primaryProfileId);
   }
 
   static getFamilyMemberByToken(token: string): FamilyMember | undefined {
-    const all = this.getItem<FamilyMember[]>(STORAGE_KEYS.FAMILY_MEMBERS, SEED_FAMILY_MEMBERS);
+    const all = this.getItem<FamilyMember[]>(STORAGE_KEYS.FAMILY_MEMBERS, []);
     return all.find((f) => f.invite_token === token);
   }
 
@@ -339,7 +360,7 @@ export class MockRepository {
     phone?: string,
     email?: string
   ): FamilyMember {
-    const all = this.getItem<FamilyMember[]>(STORAGE_KEYS.FAMILY_MEMBERS, SEED_FAMILY_MEMBERS);
+    const all = this.getItem<FamilyMember[]>(STORAGE_KEYS.FAMILY_MEMBERS, []);
     const newMember: FamilyMember = {
       id: `fam-${Date.now()}`,
       primary_profile_id: primaryProfileId,
@@ -358,8 +379,8 @@ export class MockRepository {
   }
 
   static getFamilyReviews(primaryProfileId: string): FamilyReview[] {
-    const allReviews = this.getItem<FamilyReview[]>(STORAGE_KEYS.FAMILY_REVIEWS, SEED_FAMILY_REVIEWS);
-    const members = this.getItem<FamilyMember[]>(STORAGE_KEYS.FAMILY_MEMBERS, SEED_FAMILY_MEMBERS);
+    const allReviews = this.getItem<FamilyReview[]>(STORAGE_KEYS.FAMILY_REVIEWS, []);
+    const members = this.getItem<FamilyMember[]>(STORAGE_KEYS.FAMILY_MEMBERS, []);
     const profiles = this.getProfiles();
 
     return allReviews
@@ -378,7 +399,7 @@ export class MockRepository {
     recommendation: any,
     privateNote?: string
   ): FamilyReview {
-    const allReviews = this.getItem<FamilyReview[]>(STORAGE_KEYS.FAMILY_REVIEWS, SEED_FAMILY_REVIEWS);
+    const allReviews = this.getItem<FamilyReview[]>(STORAGE_KEYS.FAMILY_REVIEWS, []);
     const newReview: FamilyReview = {
       id: `rev-${Date.now()}`,
       family_member_id: familyMemberId,
@@ -417,7 +438,7 @@ export class MockRepository {
   }
 
   static getReports(): ReportItem[] {
-    const reports = this.getItem<ReportItem[]>(STORAGE_KEYS.REPORTS, SEED_REPORTS);
+    const reports = this.getItem<ReportItem[]>(STORAGE_KEYS.REPORTS, []);
     const profiles = this.getProfiles();
     return reports.map((r) => ({
       ...r,
@@ -427,7 +448,7 @@ export class MockRepository {
   }
 
   static submitReport(reporterId: string, reportedId: string, reason: any, details: string): ReportItem {
-    const reports = this.getItem<ReportItem[]>(STORAGE_KEYS.REPORTS, SEED_REPORTS);
+    const reports = this.getItem<ReportItem[]>(STORAGE_KEYS.REPORTS, []);
     const newReport: ReportItem = {
       id: `rep-${Date.now()}`,
       reporter_id: reporterId,
@@ -443,7 +464,7 @@ export class MockRepository {
   }
 
   static updateReportStatus(reportId: string, status: any, moderatorNotes?: string): ReportItem {
-    const reports = this.getItem<ReportItem[]>(STORAGE_KEYS.REPORTS, SEED_REPORTS);
+    const reports = this.getItem<ReportItem[]>(STORAGE_KEYS.REPORTS, []);
     const index = reports.findIndex((r) => r.id === reportId);
     if (index === -1) throw new Error('Report not found');
     reports[index].status = status;
@@ -460,12 +481,13 @@ export class MockRepository {
     const connections = this.getConnections();
     const reports = this.getReports();
 
+    const totalCompleteness = profiles.reduce((acc, p) => acc + (p.completeness_score || 0), 0);
+    const avgCompleteness = profiles.length > 0 ? Math.round(totalCompleteness / profiles.length) : 0;
+
     return {
       totalUsers: profiles.length,
       verifiedUsers: profiles.filter((p) => p.is_verified).length,
-      averageCompleteness: Math.round(
-        profiles.reduce((acc, p) => acc + (p.completeness_score || 0), 0) / profiles.length
-      ),
+      averageCompleteness: avgCompleteness,
       interestsSent: interests.length,
       mutualConnections: connections.length,
       openReports: reports.filter((r) => r.status === 'open').length,

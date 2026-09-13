@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Filter, Search, SlidersHorizontal, RotateCcw } from 'lucide-react';
+import Link from 'next/link';
+import { Sparkles, Filter, Search, SlidersHorizontal, RotateCcw, Users, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/lib/auth/auth-context';
 import { MockRepository } from '@/lib/mock/mock-repository';
 import MatchCard from '@/components/matches/MatchCard';
@@ -26,16 +27,46 @@ export default function DiscoverPage() {
   });
 
   useEffect(() => {
-    if (!profile) return;
-    const recs = MockRepository.getRecommendations(profile.id);
-    setRecommendations(recs);
+    if (profile) {
+      const recs = MockRepository.getRecommendations(profile.id);
+      setRecommendations(recs);
 
-    const interests = MockRepository.getInterestsForProfile(profile.id);
-    setSentInterestIds(interests.sent.map((i) => i.receiver_id));
+      const interests = MockRepository.getInterestsForProfile(profile.id);
+      setSentInterestIds(interests.sent.map((i) => i.receiver_id));
+    } else {
+      // Guest visitor: show all active verified candidates
+      const activeProfiles = MockRepository.getProfiles().filter(
+        (p) => p.is_active !== false && p.account_status !== 'pending_approval' && p.account_status !== 'banned'
+      );
+      setRecommendations(
+        activeProfiles.map((p) => ({
+          profile: p,
+          score: {
+            candidateId: p.id,
+            overallScore: 85,
+            factors: {
+              ageScore: 12,
+              locationScore: 12,
+              educationScore: 12,
+              professionScore: 12,
+              languageScore: 12,
+              lifestyleScore: 8,
+              interestsScore: 12,
+            },
+            strongAlignment: ['Verified matrimonial member'],
+            thingsToDiscuss: ['Connect to discuss lifestyle and partner preferences'],
+          },
+        }))
+      );
+      setSentInterestIds([]);
+    }
   }, [profile]);
 
   const handleSendInterest = (candidateId: string) => {
-    if (!profile) return;
+    if (!profile) {
+      window.location.href = '/login';
+      return;
+    }
     MockRepository.sendInterest(profile.id, candidateId);
     setSentInterestIds((prev) => [...prev, candidateId]);
   };
@@ -150,8 +181,32 @@ export default function DiscoverPage() {
         </div>
       </div>
 
-      {/* Matches Grid */}
-      {filteredMatches.length > 0 ? (
+      {/* Matches Grid or Empty State */}
+      {recommendations.length === 0 ? (
+        <div className="bg-white rounded-3xl p-10 text-center border border-slate-200/80 shadow-soft max-w-lg mx-auto space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-rose-50 text-brand-600 mx-auto flex items-center justify-center">
+            <Users className="w-8 h-8" />
+          </div>
+          <h3 className="font-bold text-slate-900 text-lg">No Candidates Registered Yet</h3>
+          <p className="text-xs text-slate-600 leading-relaxed max-w-sm mx-auto">
+            Be among the first verified matrimonial candidates on Matrimony OS. Complete your profile to get discovered by compatible families.
+          </p>
+          <div className="flex items-center justify-center space-x-3 pt-2">
+            <Link
+              href="/onboarding"
+              className="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition shadow-sm"
+            >
+              Register Candidate Profile
+            </Link>
+            <Link
+              href="/how-it-works"
+              className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition"
+            >
+              How It Works
+            </Link>
+          </div>
+        </div>
+      ) : filteredMatches.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredMatches.map(({ profile: candidate, score }) => (
             <MatchCard

@@ -84,8 +84,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           role: 'admin',
         });
         setProfile(null);
-      } else {
-        const userProfile = MockRepository.getProfileByUserId(currentUserId) || MockRepository.getProfiles()[0];
+      } else if (currentUserId) {
+        const userProfile = MockRepository.getProfileByUserId(currentUserId);
         if (userProfile) {
           setUser({
             id: userProfile.user_id,
@@ -93,7 +93,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             role: 'member',
           });
           setProfile(userProfile);
+        } else {
+          setUser(null);
+          setProfile(null);
         }
+      } else {
+        setUser(null);
+        setProfile(null);
       }
     } catch (err) {
       console.error('Error loading auth session:', err);
