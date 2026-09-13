@@ -91,7 +91,7 @@ export default function PricingPage() {
             <div>
               <h3 className="font-bold text-base text-brand-950">Premium Plan</h3>
               <div className="text-2xl font-extrabold text-brand-950 mt-1">
-                ₹1,499 <span className="text-xs font-normal text-slate-500">/ 3 months</span>
+                ₹9,999 <span className="text-xs font-normal text-slate-500">/ 3 months</span>
               </div>
               <p className="text-[11px] text-brand-700">For serious active seekers</p>
             </div>
@@ -132,7 +132,7 @@ export default function PricingPage() {
             <div>
               <h3 className="font-bold text-base text-slate-900">Assisted Matrimony</h3>
               <div className="text-2xl font-extrabold text-slate-900 mt-1">
-                ₹9,999 <span className="text-xs font-normal text-slate-500">/ 6 months</span>
+                ₹99,999 <span className="text-xs font-normal text-slate-500">/ 6 months</span>
               </div>
               <p className="text-[11px] text-slate-500">Dedicated relationship advisor</p>
             </div>

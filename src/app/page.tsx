@@ -276,7 +276,7 @@ export default function LandingPage() {
             </span>
             <div className="space-y-1">
               <h3 className="font-bold text-base text-brand-950">Premium Member</h3>
-              <div className="text-2xl font-extrabold text-brand-950">₹1,499 <span className="text-xs font-normal text-slate-500">/ quarter</span></div>
+              <div className="text-2xl font-extrabold text-brand-950">₹9,999 <span className="text-xs font-normal text-slate-500">/ quarter</span></div>
               <p className="text-[11px] text-brand-700">For active matrimonial seekers</p>
             </div>
             <ul className="space-y-2 text-xs text-slate-700">
@@ -298,7 +298,7 @@ export default function LandingPage() {
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-soft space-y-4">
             <div className="space-y-1">
               <h3 className="font-bold text-base text-slate-900">Assisted Matrimony</h3>
-              <div className="text-2xl font-extrabold text-slate-900">₹9,999 <span className="text-xs font-normal text-slate-500">/ 6 months</span></div>
+              <div className="text-2xl font-extrabold text-slate-900">₹99,999 <span className="text-xs font-normal text-slate-500">/ 6 months</span></div>
               <p className="text-[11px] text-slate-500">Dedicated relationship consultant</p>
             </div>
             <ul className="space-y-2 text-xs text-slate-600">

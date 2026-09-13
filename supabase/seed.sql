@@ -19,6 +19,6 @@ ON CONFLICT (name) DO NOTHING;
 -- 2. SUBSCRIPTION PLANS
 INSERT INTO subscription_plans (id, code, name, price_inr, duration_days, features) VALUES
 ('s0000000-0000-0000-0000-000000000001', 'free', 'Free Member', 0, 365, '{"daily_interests": 5, "family_invites": 1, "ai_bio_boosts": 1}'),
-('s0000000-0000-0000-0000-000000000002', 'premium', 'Premium Member', 1499, 90, '{"daily_interests": -1, "family_invites": -1, "ai_bio_boosts": -1, "priority_placement": true, "whatsapp_unlock": true}'),
-('s0000000-0000-0000-0000-000000000003', 'assisted', 'Assisted Matrimony', 9999, 180, '{"human_advisor": true, "family_coordination": true, "curated_matches": true}')
+('s0000000-0000-0000-0000-000000000002', 'premium', 'Premium Member', 9999, 90, '{"daily_interests": -1, "family_invites": -1, "ai_bio_boosts": -1, "priority_placement": true, "whatsapp_unlock": true}'),
+('s0000000-0000-0000-0000-000000000003', 'assisted', 'Assisted Matrimony', 99999, 180, '{"human_advisor": true, "family_coordination": true, "curated_matches": true}')
 ON CONFLICT (code) DO NOTHING;
