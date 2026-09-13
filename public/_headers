@@ -1,0 +1,24 @@
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Global privacy protection on all matrimonial routes
+/profile/*
+  X-Robots-Tag: noindex, nofollow
+
+/match/*
+  X-Robots-Tag: noindex, nofollow
+
+/family/*
+  X-Robots-Tag: noindex, nofollow
+
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+
+# Static assets caching
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/icons/*
+  Cache-Control: public, max-age=86400
