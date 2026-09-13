@@ -5,5 +5,8 @@ pages_build_output_dir = "out"
 
 # Cloudflare Pages Environment Variables
 [vars]
-NEXT_PUBLIC_APP_URL = "https://matrimony-os.pages.dev"
+NEXT_PUBLIC_APP_URL = "https://matrimony.pages.dev"
+NEXT_PUBLIC_SUPABASE_URL = "https://qmfobmqnraclydtkqcri.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtZm9ibXFucmFjbHlkdGtxY3JpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkyNjkyOTMsImV4cCI6MjEwNDg0NTI5M30.eeQW4585JWXQv5iXdT8C7qnIaVkJe-2yzyzLWLUGmic"
+
 
