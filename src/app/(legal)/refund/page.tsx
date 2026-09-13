@@ -32,7 +32,7 @@ export default function RefundPage() {
 
         <h2 className="text-sm font-bold text-slate-900">3. How to Request a Refund</h2>
         <p>
-          Email billing@matrimonyos.com with your registered user ID and payment reference number. Refunds are processed within 5–7 business days to the original payment source.
+          Submit a request through our <Link href="/contact" className="text-brand-600 underline font-medium">Contact Desk</Link> with your registered user ID and payment reference number. Refunds are processed within 5–7 business days to the original payment source.
         </p>
       </div>
     </div>

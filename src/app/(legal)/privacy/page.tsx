@@ -43,7 +43,7 @@ export default function PrivacyPolicyPage() {
 
         <h2 className="text-sm font-bold text-slate-900">4. Account Deletion & Data Rights</h2>
         <p>
-          Users may delete their profile, photo assets, and interaction logs at any time directly through the Privacy & Safety Center or by contacting privacy@matrimonyos.com.
+          Users may delete their profile, photo assets, and interaction logs at any time directly through the Privacy & Safety Center or by submitting a deletion request through our <Link href="/contact" className="text-brand-600 underline font-medium">Contact Desk</Link>.
         </p>
       </div>
     </div>

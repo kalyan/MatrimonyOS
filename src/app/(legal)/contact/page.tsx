@@ -2,15 +2,47 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+      setError('Please fill in all required fields.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (res.status === 404 && typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+          console.info('[Dev] Contact message simulated locally. Cloudflare Pages Function handles edge delivery.');
+          setSubmitted(true);
+          return;
+        }
+        throw new Error(data.error || 'Failed to dispatch message. Please try again.');
+      }
+
+      setSubmitted(true);
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -28,8 +60,8 @@ export default function ContactPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-soft text-center space-y-1">
           <Mail className="w-5 h-5 text-brand-600 mx-auto" />
-          <div className="font-bold text-xs text-slate-900">Email Support</div>
-          <div className="text-[11px] text-slate-500">support@matrimonyos.com</div>
+          <div className="font-bold text-xs text-slate-900">Direct Support Desk</div>
+          <div className="text-[11px] text-slate-500">24/7 Ticket Response</div>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-soft text-center space-y-1">
@@ -95,12 +127,29 @@ export default function ContactPage() {
               />
             </div>
 
+            {error && (
+              <div className="flex items-center space-x-2 p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
             <button
               type="submit"
-              className="py-2.5 px-6 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition shadow-sm flex items-center space-x-1.5"
+              disabled={loading}
+              className="py-2.5 px-6 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition shadow-sm flex items-center space-x-1.5 disabled:opacity-60 cursor-pointer"
             >
-              <Send className="w-3.5 h-3.5" />
-              <span>Send Message</span>
+              {loading ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>Sending...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Send Message</span>
+                </>
+              )}
             </button>
           </form>
         ) : (

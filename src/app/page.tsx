@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { SEED_PROFILES } from '@/lib/mock/seed-data';
 
+
 export default function LandingPage() {
   const sampleCandidate = SEED_PROFILES[0]; // Priya Sharma
 
@@ -366,29 +367,6 @@ export default function LandingPage() {
           </Link>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t border-slate-200 pt-8 text-xs text-slate-500 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center space-x-2 font-bold text-slate-800">
-            <Heart className="w-4 h-4 text-brand-600 fill-brand-600" />
-            <span>Matrimony OS</span>
-          </div>
-          <div className="flex flex-wrap gap-4 text-slate-600">
-            <Link href="/terms" className="hover:text-slate-900">Terms of Service</Link>
-            <Link href="/privacy" className="hover:text-slate-900">Privacy Policy</Link>
-            <Link href="/guidelines" className="hover:text-slate-900">Community Guidelines</Link>
-            <Link href="/safety" className="hover:text-slate-900">Safety Guidelines</Link>
-            <Link href="/refund" className="hover:text-slate-900">Refund Policy</Link>
-            <Link href="/contact" className="hover:text-slate-900">Contact</Link>
-            <Link href="/report-abuse" className="text-rose-600 hover:text-rose-700">Report Abuse</Link>
-          </div>
-        </div>
-        <div className="flex flex-col sm:flex-row items-center justify-between pt-2 border-t border-slate-100 text-[11px] text-slate-400 gap-2">
-          <p>© 2026 Matrimony OS. Built for meaningful connections and family trust.</p>
-          <p className="font-semibold text-slate-600">Copyrights Flugelsoft Labs. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }

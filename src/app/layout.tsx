@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth/auth-context';
 import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import BottomNav from '@/components/layout/BottomNav';
 
 export const metadata: Metadata = {
@@ -44,8 +45,11 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col bg-[#FAF8F5] text-slate-900 antialiased font-sans pb-16 md:pb-0">
         <AuthProvider>
           <Header />
-          <main className="flex-1 w-full max-w-6xl mx-auto px-4 py-4 sm:py-6">
-            {children}
+          <main className="flex-1 w-full max-w-6xl mx-auto px-4 py-4 sm:py-6 flex flex-col">
+            <div className="flex-1">
+              {children}
+            </div>
+            <Footer />
           </main>
           <BottomNav />
         </AuthProvider>

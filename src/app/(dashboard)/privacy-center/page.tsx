@@ -175,7 +175,7 @@ export default function PrivacyPage() {
         <div className="font-bold text-slate-800">Our Privacy Principles:</div>
         <div>1. Matrimony OS does not sell personal data or display public contact information.</div>
         <div>2. Profile pages enforce `noindex, nofollow` to prevent Google indexing.</div>
-        <div>3. You can request complete account deletion at any time by contacting privacy@matrimonyos.com.</div>
+        <div>3. You can request complete account deletion at any time by reaching out via our Contact Helpdesk.</div>
       </div>
     </div>
   );
